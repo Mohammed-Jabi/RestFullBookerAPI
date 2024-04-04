@@ -1,5 +1,5 @@
 
-from faker import faker
+import faker
 import json
 def payload_create_booking():
     payload = {
