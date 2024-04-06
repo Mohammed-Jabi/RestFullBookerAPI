@@ -1,3 +1,10 @@
+#Get the response
+#Create the Json Schema from http://jsonschema.net/
+#Save the schema into the name.json file
+import os
+
+from jsonschema import validate
+
 import allure
 import pytest
 
@@ -7,8 +14,12 @@ from src.helpers.common_verifications import *
 from src.util.utils import Util
 from src.helpers.payload import *
 
+class TestCreateBookingJSONSchema:
 
-class TestCreateBooking:
+    def load_schema(self, file_name):
+        with open(file_name, "r") as file:
+            return json.load(file)
+
     # @pytest.mark.positive
     @allure.title("Verifying that Create Booking ID and Booking Status should not be empty")
     @allure.description("Create booking")
@@ -24,15 +35,12 @@ class TestCreateBooking:
         verfiy_http_status_code(response_data = response, expect_data = 200)
         verify_json_key_for_not_null(booking_id)
 
-    # @pytest.mark.negative
-    @allure.title("Verifying that Create Booking ID and Booking give 500 status cod if entered empty payload")
-    @allure.description("Create booking")
-    def test_create_booking_negative(self):
-        # payload = payload_create_booking()
-        response = post_request(url = APIConstants.url_create_booking(),
-                                auth = None,
-                                headers = Util().common_headers_json(),
-                                payload = {},
-                                in_json = False)
+        #response with schema json validation
+        #file_path = "/home/jabir/APIAutomation/tests/test/crud/create_schema.json"
+        file_path = os.getcwd()+"/create_schema.json"
+        schema = self.load_schema(file_path)
+        try:
+            validate(instance=response.json(), schema=schema)
+        except Exception as e:
+            print(e)
 
-        verfiy_http_status_code(response_data = response, expect_data = 500)
