@@ -2,6 +2,7 @@
 #crete booking id
 #update booking id - BookingID, Token
 #delete booking id - BookingID, Token
+import logging
 
 #verifying that Create Booking ID when we update we are able to update it and delete it
 
@@ -27,6 +28,8 @@ class TestCRUDBooking:
     @allure.description(
         "Verify that Full Update with the booking ID and Token is working.")
     def test_update_booking_id_token(self,create_token,get_booking_id):
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger(__name__)
         booking_id = get_booking_id
         token = create_token
         put_url = APIConstants.url_patch_put_delete(booking_id=booking_id)
@@ -37,6 +40,7 @@ class TestCRUDBooking:
             auth=None,
             in_json=False
         )
+        logger.info("Request is sent"+str(response.text))
         # verify_json_key_for_not_null(response.json()["firstname"])
         # verify_json_key_for_not_null(response.json()["lastname"])
         verfiy_http_status_code(response_data=response, expect_data=200)
